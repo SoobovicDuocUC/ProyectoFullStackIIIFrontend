@@ -1,5 +1,5 @@
 import './../../index.css';
-import { AuthHeader } from '../03.- Organisms/AuthHeader';
+import { AuthHeader } from '..//../components/03.- Organisms/AuthHeader';
 
 export const AuthLayout = ({ children }) => {
   return (
