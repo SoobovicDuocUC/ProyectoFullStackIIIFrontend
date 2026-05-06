@@ -1,5 +1,6 @@
 import './../../index.css';
 import { Header } from '../03.- Organisms/Header';
+import { Footer } from '../03.- Organisms/Footer';
 
 export const MainLayout = ({ children }) => {
   return (
@@ -8,6 +9,7 @@ export const MainLayout = ({ children }) => {
       <main className="main-content">
         {children}
       </main>
+      <Footer />
     </div>
   );
 };

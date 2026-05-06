@@ -1,5 +1,6 @@
 import './../../index.css';
-import { AuthHeader } from '..//../components/03.- Organisms/AuthHeader';
+import { AuthHeader } from '../../components/03.- Organisms/AuthHeader';
+import { Footer } from '../../components/03.- Organisms/Footer';
 
 export const AuthLayout = ({ children }) => {
   return (
@@ -20,6 +21,7 @@ export const AuthLayout = ({ children }) => {
 
         </div>
       </div>
+      <Footer />
     </div>
   );
 };
