@@ -1,14 +1,13 @@
 import { Routes, Route } from 'react-router-dom';
-import { LandingPage } from "./Components/05.- Pages/LandingPage";
-import { LoginPage } from "./Components/05.- Pages/LoginPage";
+import { LandingPage } from "./Components/05.- Pages/Landing/LandingPage";
+import { LoginPage } from "./Components/05.- Pages/Login/LoginPage";
+import { SuccessPage } from "./Components/05.- Pages/Success/SuccessPage"; // <-- New Route
 
 function App() {
   return (
     <Routes>
-      {/* Route for the main public reporting page */}
       <Route path="/" element={<LandingPage />} />
-      
-      {/* Route for the restricted authorities portal */}
+      <Route path="/success" element={<SuccessPage />} />
       <Route path="/login" element={<LoginPage />} />
     </Routes>
   );

@@ -1,0 +1,86 @@
+
+.login-page-root {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: #111827; /* Dark Charcoal Base */
+  width: 100%;
+}
+
+.login-wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+}
+
+.login-header-area {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.login-header-area h1 {
+  color: #EF4444; /* Bright Alarm Red */
+  font-size: 2.2rem;
+  margin: 0 0 10px 0;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-weight: 800;
+}
+
+.login-header-area p {
+  color: #9ca3af;
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+
+.login-page-root .form-card {
+  background-color: #1f2937; /* Dark Slate Card */
+  padding: 2.5rem;
+  border-radius: 12px;
+  box-shadow: rgba(0, 0, 0, 0.4) 0 10px 15px -3px;
+  width: 100%;
+  max-width: 400px; /* Slimmer Card for Login */
+  border-top: 5px solid #EF4444;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.login-page-root .form-card h2 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: #f3f4f6;
+  font-weight: 800;
+}
+
+.login-page-root .form-card p {
+  font-size: 0.95rem;
+  color: #9ca3af;
+  margin-bottom: 2rem;
+}
+
+.login-page-root .form-label {
+  color: #f3f4f6; /* White text for labels on dark backgrounds */
+}
+
+.login-page-root .form-input {
+  border: 2px solid #374151;
+  background-color: #1f2937;
+  color: #f3f4f6;
+}
+
+.login-page-root .form-input:focus {
+  border-color: #EF4444;
+}
+
+.login-page-root .form-button {
+  background-color: #EF4444;
+  margin-top: 1rem;
+}
+
+.login-page-root .form-button:hover {
+  filter: brightness(0.85);
+}
