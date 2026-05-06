@@ -1,0 +1,19 @@
+.footer-bar {
+  background-color: #1f2937d8;
+  padding: 1.5rem;
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.footer-content {
+  font-weight: 500;
+}
+
+.footer-emergency {
+  font-weight: 600;
+  color: var(--accent);
+}
