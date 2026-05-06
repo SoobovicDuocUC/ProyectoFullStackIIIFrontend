@@ -1,0 +1,81 @@
+/* ==========================================================================
+   SUCCESS PAGE STYLES (Floating Card with clean confirmations)
+   ========================================================================== */
+
+.success-card {
+  background-color: var(--bg);
+  padding: 3rem 2.5rem;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  width: 100%;
+  max-width: 480px;
+  border-top: 5px solid #10B981; /* Success Green border */
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.success-icon {
+  background-color: #D1FAE5;
+  color: #059669;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: bold;
+  margin: 0 auto 1.5rem auto;
+}
+
+.success-card h2 {
+  color: #059669;
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  font-size: 1.8rem;
+  font-weight: 800;
+}
+
+.success-card p {
+  font-size: 1rem;
+  color: var(--text);
+  line-height: 1.5;
+}
+
+.success-divider {
+  border: 0;
+  height: 1px;
+  background-color: var(--border);
+  margin: 2rem 0;
+}
+
+.login-prompt-section {
+  text-align: center;
+}
+
+.login-text {
+  font-size: 0.9rem;
+  color: var(--text);
+  margin-bottom: 1rem;
+}
+
+.success-login-button {
+  display: inline-block;
+  width: 100%;
+  padding: 1rem;
+  background-color: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.2s;
+  text-decoration: none;
+}
+
+.success-login-button:hover {
+  filter: brightness(0.85);
+  transform: translateY(-1px);
+}
