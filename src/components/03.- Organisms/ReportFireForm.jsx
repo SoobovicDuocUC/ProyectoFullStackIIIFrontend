@@ -7,8 +7,6 @@ export const ReportFireForm = () => {
 
   const [descripcion, setDescripcion] = useState("");
   const [tipoIncendio, setTipoIncendio] = useState("FORESTAL");
-  const [anonimo, setAnonimo] = useState(true);
-  const [runCiudadano, setRunCiudadano] = useState("");
   const [latitud, setLatitud] = useState("");
   const [longitud, setLongitud] = useState("");
   const [loading, setLoading] = useState(false);
@@ -32,64 +30,51 @@ export const ReportFireForm = () => {
     );
   };
 
-  const handleAnonimoChange = (e) => {
-    const value = e.target.checked;
-    setAnonimo(value);
-    if (value) {
-      setRunCiudadano("");
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+
+    if (!latitud || !longitud) {
+      setError("Debes obtener tu ubicación antes de enviar el reporte.");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      // El payload ahora calza perfectamente con tu nuevo ReporteRequestDTO
+      const payload = {
+        latitud: Number(latitud),
+        longitud: Number(longitud),
+        descripcion,
+        tipoIncendio,
+      };
+
+      const response = await fetch(
+        "http://localhost:8082/api/bff/emergencias/reportar",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        }
+      );
+
+      if (!response.ok) {
+        const msg = await response.text();
+        throw new Error(msg || "Error al enviar el reporte");
+      }
+
+      // IMPORTANTE: Si el backend devuelve el ID del reporte generado, 
+      // podrías capturarlo aquí para mandarlo a la página de éxito y que hagan seguimiento.
+      navigate("/success"); 
+    } catch (err) {
+      setError(err.message || "Error al enviar el reporte");
+    } finally {
+      setLoading(false);
     }
   };
-
-  const handleSubmit = async (e) => {
-  e.preventDefault();
-  setLoading(true);
-  setError("");
-
-  if (!latitud || !longitud) {
-    setError("Debes obtener tu ubicación antes de enviar el reporte.");
-    setLoading(false);
-    return;
-  }
-
-  if (!anonimo && !runCiudadano.trim()) {
-    setError("Debes ingresar tu RUN si el reporte no es anónimo.");
-    setLoading(false);
-    return;
-  }
-
-  try {
-    const payload = {
-  latitud: Number(latitud),
-  longitud: Number(longitud),
-  descripcion,
-  tipoIncendio,
-  anonimo,
-  runCiudadano: anonimo ? null : runCiudadano
-};
-
-    const response = await fetch(
-      "http://localhost:8082/api/bff/emergencias/reportar",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(payload)
-      }
-    );
-
-    if (!response.ok) {
-      const msg = await response.text();
-      throw new Error(msg || "Error al enviar el reporte");
-    }
-
-    navigate("/success");
-  } catch (err) {
-    setError(err.message || "Error al enviar el reporte");
-  } finally {
-    setLoading(false);
-  }
-};
 
   return (
     <form className="form-card" onSubmit={handleSubmit}>
@@ -153,39 +138,13 @@ export const ReportFireForm = () => {
         />
       </div>
 
-      <div className="form-group">
-        <label className="form-label">
-          <input
-            type="checkbox"
-            checked={anonimo}
-            onChange={handleAnonimoChange}
-          />
-          {" "}Reportar como anónimo
-        </label>
+      {error && <p style={{ color: "red", marginTop: "1rem" }}>{error}</p>}
+
+      <div style={{ marginTop: "1.5rem" }}>
+        <Button type="submit" disabled={loading}>
+          {loading ? "Enviando..." : "Enviar Reporte"}
+        </Button>
       </div>
-
-      {!anonimo && (
-        <div className="form-group">
-          <label className="form-label" htmlFor="runCiudadano">
-            RUN del ciudadano
-          </label>
-          <input
-            id="runCiudadano"
-            className="form-input"
-            type="text"
-            placeholder="12.345.678-9"
-            value={runCiudadano}
-            onChange={(e) => setRunCiudadano(e.target.value)}
-            required={!anonimo}
-          />
-        </div>
-      )}
-
-      {error && <p style={{ color: "red" }}>{error}</p>}
-
-      <Button type="submit" disabled={loading}>
-        {loading ? "Enviando..." : "Enviar Reporte"}
-      </Button>
     </form>
   );
 };
