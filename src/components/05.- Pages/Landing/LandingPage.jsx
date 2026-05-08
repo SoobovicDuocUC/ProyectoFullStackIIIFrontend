@@ -7,7 +7,7 @@ export const LandingPage = () => {
     <MainLayout>
       <div className="landing-hero-section">
         <div className="landing-text-block">
-          <h2>Portal de Denuncias</h2>
+          <h2>Portal de Reportes</h2>
           <p>
             Si avista una columna de humo o un foco de incendio, utilice este formulario de inmediato. 
             La información será enviada directamente a las brigadas de respuesta rápida.

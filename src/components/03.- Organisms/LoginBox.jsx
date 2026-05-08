@@ -8,10 +8,10 @@ export const LoginBox = () => {
       <p>Acceda de manera segura utilizando su credencial institucional del Estado.</p>
       
       <FormField 
-        label="R.U.T. (Ej: 12.345.678-9)" 
+        label="RUN o Pasaporte" 
         id="rut" 
         type="text" 
-        placeholder="Ingrese su R.U.T." 
+        placeholder="Ej: 12.345.678-9 o AA123456" 
       />
       <FormField 
         label="ClaveÚnica" 
