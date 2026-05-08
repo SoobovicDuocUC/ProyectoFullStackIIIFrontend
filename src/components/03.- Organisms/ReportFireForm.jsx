@@ -42,7 +42,6 @@ export const ReportFireForm = () => {
     }
 
     try {
-      // El payload ahora calza perfectamente con tu nuevo ReporteRequestDTO
       const payload = {
         latitud: Number(latitud),
         longitud: Number(longitud),
@@ -66,9 +65,14 @@ export const ReportFireForm = () => {
         throw new Error(msg || "Error al enviar el reporte");
       }
 
-      // IMPORTANTE: Si el backend devuelve el ID del reporte generado, 
-      // podrías capturarlo aquí para mandarlo a la página de éxito y que hagan seguimiento.
-      navigate("/success"); 
+      // 🔴 NUEVO: Capturamos la respuesta del backend
+      const data = await response.json(); 
+
+      // 🔴 NUEVO: Navegamos a /success pasándole el código de seguimiento en el 'state'
+      navigate("/success", { 
+        state: { codigoSeguimiento: data.codigoSeguimiento } 
+      }); 
+
     } catch (err) {
       setError(err.message || "Error al enviar el reporte");
     } finally {
