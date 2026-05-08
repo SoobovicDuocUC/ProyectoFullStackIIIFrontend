@@ -1,0 +1,48 @@
+.badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  display: inline-block;
+}
+
+.badge-success {
+  background-color: #10b981;
+  color: white;
+}
+
+.badge-warning {
+  background-color: #f59e0b;
+  color: white;
+}
+
+.badge-danger {
+  background-color: #ef4444;
+  color: white;
+}
+
+.badge-critica {
+  background-color: #dc2626;
+  color: white;
+}
+
+.badge-alta {
+  background-color: #ea580c;
+  color: white;
+}
+
+.badge-media {
+  background-color: #ca8a04;
+  color: white;
+}
+
+.badge-baja {
+  background-color: #65a30d;
+  color: white;
+}
+
+.badge-default {
+  background-color: #6b7280;
+  color: white;
+}
