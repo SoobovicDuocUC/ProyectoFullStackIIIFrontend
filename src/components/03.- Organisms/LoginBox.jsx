@@ -4,55 +4,76 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export const LoginBox = () => {
-  // TODO: INTEGRACIÓN API - Reemplazar validación hardcoded con llamada a endpoint de autenticación
-  // TODO: INTEGRACIÓN API - Implementar manejo de tokens JWT y refresh tokens
-  // TODO: INTEGRACIÓN API - Agregar manejo de errores de autenticación específicos
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setLoading(true);
 
-    const rut = e.target.rut.value.trim();
-    const password = e.target.password.value.trim();
+    try {
+      // 1. Armamos el payload exacto que espera tu UsuarioRequestDTO
+      const payload = {
+        email: email.trim(),
+        password: password.trim(),
+      };
 
-    // TODO: INTEGRACIÓN API - Reemplazar array hardcoded con llamada a GET /api/autoridades/validar
-    const autoridades = [
-      { rut: "11.111.111-1", password: "autoridad123", nombre: "Juan Pérez" },
-      { rut: "22.222.222-2", password: "autoridad456", nombre: "María González" },
-      { rut: "33.333.333-3", password: "admin789", nombre: "Carlos Rodríguez" }
-    ];
+      // 2. Hacemos la petición al BFF
+      const response = await fetch("http://localhost:8082/api/bff/emergencias/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
 
-    const autoridad = autoridades.find(
-      auth => auth.rut === rut && auth.password === password
-    );
+      if (!response.ok) {
+        throw new Error("Credenciales incorrectas. Verifica tu correo y contraseña.");
+      }
 
-    if (autoridad) {
-      // TODO: INTEGRACIÓN API - Reemplazar con respuesta del endpoint de autenticación
-      localStorage.setItem("autoridad", JSON.stringify(autoridad));
+      // 3. Obtenemos el AuthResponseDTO (que trae el token y los datos del usuario)
+      const data = await response.json();
+
+      // 4. Guardamos el Token y los datos del usuario en el navegador (Local Storage)
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("usuario", JSON.stringify(data.usuario));
+
+      // 5. Redirigimos al panel de reportes
       navigate("/reportes");
-    } else {
-      setError("Credenciales incorrectas. Solo autoridades pueden acceder.");
+
+    } catch (err) {
+      setError(err.message || "Error al conectar con el servidor.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <form className="form-card" style={{ maxWidth: '400px' }} onSubmit={handleSubmit}>
-      <h2>Acceso de Autoridades</h2>
-      <p>Acceda de manera segura utilizando su credencial institucional del Estado.</p>
+      <h2>Acceso de Funcionarios</h2>
+      <p>Acceda utilizando su correo institucional y contraseña.</p>
       
       <FormField 
-        label="RUN o Pasaporte" 
-        id="rut" 
-        type="text" 
-        placeholder="Ej: 12.345.678-9 o AA123456" 
+        label="Correo Electrónico" 
+        id="email" 
+        type="email" 
+        placeholder="Ej: admin@innovatech.cl"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        required
       />
       <FormField 
-        label="ClaveÚnica" 
+        label="Contraseña" 
         id="password" 
         type="password" 
         placeholder="••••••••" 
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        required
       />
       
       {error && (
@@ -62,7 +83,9 @@ export const LoginBox = () => {
       )}
       
       <div style={{ marginTop: '2rem' }}>
-        <Button type="submit">Ingresar con ClaveÚnica</Button>
+        <Button type="submit" disabled={loading}>
+          {loading ? "Validando credenciales..." : "Iniciar Sesión"}
+        </Button>
       </div>
     </form>
   );

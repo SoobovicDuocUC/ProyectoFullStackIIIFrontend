@@ -1,11 +1,14 @@
-export const Input = ({ type = 'text', placeholder, name, id }) => {
+export const Input = ({ type, id, name, placeholder, value, onChange, required }) => {
   return (
-    <input
+    <input 
+      className="form-input" /* O la clase CSS que ya tuvieras */
       type={type}
-      name={name}
       id={id}
+      name={name}
       placeholder={placeholder}
-      className="form-input"
+      value={value}         // <-- CRÍTICO
+      onChange={onChange}   // <-- CRÍTICO
+      required={required}
     />
   );
 };
