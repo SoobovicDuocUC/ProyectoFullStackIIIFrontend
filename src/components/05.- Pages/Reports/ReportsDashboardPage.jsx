@@ -6,36 +6,34 @@ import { ReportsTable } from "../../03.- Organisms/ReportsTable";
 import "./ReportsDashboardPage.css";
 
 export const ReportsDashboardPage = () => {
-  const [autoridad, setAutoridad] = useState(null);
+  const [autoridad] = useState(() => {
+    const usuarioData = localStorage.getItem("usuario");
+    return usuarioData ? JSON.parse(usuarioData) : null;
+  });
+
   const [reports, setReports] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
-    // 1. Verificamos el token y los datos del usuario usando las claves correctas
     const token = localStorage.getItem("token");
-    const usuarioData = localStorage.getItem("usuario");
 
-    if (!token || !usuarioData) {
+    if (!token || !autoridad) {
       navigate("/login");
       return;
     }
-    
-    setAutoridad(JSON.parse(usuarioData));
 
-    // 2. Función asíncrona para obtener los reportes del backend
-    const fetchReportes = async () => {
+    const cargarReportes = async () => {
       try {
         const response = await fetch("http://localhost:8082/api/bff/emergencias/reportes", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}` // Aquí enviamos el pase VIP
+            "Authorization": `Bearer ${token}`
           }
         });
 
-        // Manejo de token expirado o inválido
         if (response.status === 401 || response.status === 403) {
           localStorage.removeItem("token");
           localStorage.removeItem("usuario");
@@ -48,13 +46,12 @@ export const ReportsDashboardPage = () => {
 
         const data = await response.json();
 
-        // 3. Adaptamos los datos del backend para que la tabla de tu compañero no se rompa
         const mappedReports = data.map((rep) => ({
           id: rep.id,
           codigoSeguimiento: rep.codigoSeguimiento,
-          fecha: rep.fechaReporte, // El backend manda fechaReporte, el front espera fecha
+          fecha: rep.fechaReporte,
           descripcion: rep.descripcion,
-          coordenadas: { latitud: rep.latitud, longitud: rep.longitud }, // Agrupamos las coordenadas
+          coordenadas: { latitud: rep.latitud, longitud: rep.longitud },
           prioridad: rep.nivelPrioridad || "NO ASIGNADA",
           tipoIncendio: rep.tipoIncendio,
           equipoAsignado: rep.equipoAsignado || "SIN ASIGNAR",
@@ -64,7 +61,6 @@ export const ReportsDashboardPage = () => {
         setReports(mappedReports);
       } catch (err) {
         setError(err.message);
-        // Si el error fue por sesión, redirigimos tras unos segundos
         if (err.message.includes("sesión")) {
             setTimeout(() => navigate("/login"), 3000);
         }
@@ -73,8 +69,32 @@ export const ReportsDashboardPage = () => {
       }
     };
 
-    fetchReportes();
-  }, [navigate]);
+    cargarReportes();
+  }, [navigate, autoridad]);
+
+  const handleStatusChange = async (reportId, nuevoEstado) => {
+    const token = localStorage.getItem("token");
+    try {
+      const response = await fetch(`http://localhost:8082/api/bff/emergencias/reportes/${reportId}/estado`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({ estado: nuevoEstado })
+      });
+
+      if (!response.ok) {
+        throw new Error("Error al actualizar el estado");
+      }
+
+      setReports(reports.map(report => 
+        report.id === reportId ? { ...report, estado: nuevoEstado } : report
+      ));
+    } catch (err) {
+      alert(err.message);
+    }
+  };
 
   if (!autoridad) {
     return <div>Cargando sesión...</div>;
@@ -100,7 +120,6 @@ export const ReportsDashboardPage = () => {
           Registro de Reportes de Emergencia
         </h2>
         
-        {/* Manejo visual de estados de Carga y Error */}
         {loading && <p style={{ color: '#0056b3' }}>Conectando con el servidor...</p>}
         {error && <p style={{ color: 'red' }}>{error}</p>}
 
@@ -109,8 +128,11 @@ export const ReportsDashboardPage = () => {
             <div style={{ marginBottom: '1rem', color: '#6b7280' }}>
               <p>Total de reportes recibidos: <strong>{reports.length}</strong></p>
             </div>
-            {/* Le pasamos los datos reales mapeados a la tabla de tu compañero */}
-            <ReportsTable reports={reports} />
+            <ReportsTable 
+              reports={reports} 
+              rolUsuario={autoridad.rol || autoridad.role} 
+              onStatusChange={handleStatusChange} 
+            />
           </>
         )}
       </div>

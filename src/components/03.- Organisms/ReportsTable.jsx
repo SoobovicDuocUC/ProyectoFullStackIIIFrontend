@@ -2,19 +2,16 @@ import { Table, TableHead, TableBody, TableRow, TableHeader, TableCell } from ".
 import { Badge } from "../01.- Atoms/Badge";
 import "./ReportsTable.css";
 
-export const ReportsTable = ({ reports }) => {
-  // TODO: INTEGRACIÓN API - Agregar manejo de estados vacíos y loading states
-  // TODO: INTEGRACIÓN API - Implementar ordenamiento por columnas
-  // TODO: INTEGRACIÓN API - Agregar filtros por estado, prioridad y tipo de incendio
+export const ReportsTable = ({ reports, rolUsuario, onStatusChange }) => {
   const getStatusVariant = (status) => {
-    switch (status.toLowerCase()) {
-      case 'APAGADO':
+    switch (status?.toLowerCase()) {
+      case 'apagado':
         return 'success';
-      case 'ACTIVO':
+      case 'activo':
         return 'warning';
-      case 'PENDIENTE':
+      case 'pendiente':
         return 'danger';
-      case 'INACTIVO':
+      case 'inactivo':
         return 'default';
       default:
         return 'default';
@@ -22,7 +19,7 @@ export const ReportsTable = ({ reports }) => {
   };
 
   const getPriorityVariant = (priority) => {
-    switch (priority.toLowerCase()) {
+    switch (priority?.toLowerCase()) {
       case 'critica':
         return 'critica';
       case 'alta':
@@ -37,6 +34,7 @@ export const ReportsTable = ({ reports }) => {
   };
 
   const formatDate = (dateString) => {
+    if (!dateString) return "N/A";
     return new Date(dateString).toLocaleDateString('es-CL', {
       year: 'numeric',
       month: '2-digit',
@@ -47,10 +45,12 @@ export const ReportsTable = ({ reports }) => {
   };
 
   const formatCoordinates = (coordenadas) => {
+    if (!coordenadas || coordenadas.latitud == null || coordenadas.longitud == null) return "N/A";
     return `${coordenadas.latitud.toFixed(4)}, ${coordenadas.longitud.toFixed(4)}`;
   };
 
   const formatEquipo = (equipo) => {
+    if (!equipo) return "SIN ASIGNAR";
     return equipo.replace(/_/g, ' ');
   };
 
@@ -73,7 +73,7 @@ export const ReportsTable = ({ reports }) => {
           <TableRow key={report.id}>
             <TableCell><span className="report-id">#{report.id}</span></TableCell>
             <TableCell>{formatDate(report.fecha)}</TableCell>
-            <TableCell><span className="description" title={report.descripcion}>{report.descripcion.substring(0, 60)}...</span></TableCell>
+            <TableCell><span className="description" title={report.descripcion}>{report.descripcion?.substring(0, 60)}...</span></TableCell>
             <TableCell>
               <span className="coordinates">
                 {formatCoordinates(report.coordenadas)}
@@ -87,9 +87,30 @@ export const ReportsTable = ({ reports }) => {
             <TableCell>{report.tipoIncendio}</TableCell>
             <TableCell>{formatEquipo(report.equipoAsignado)}</TableCell>
             <TableCell>
-              <Badge variant={getStatusVariant(report.estado)}>
-                {report.estado}
-              </Badge>
+              {rolUsuario === 'BRIGADISTA' ? (
+                <select
+                  value={report.estado}
+                  onChange={(e) => onStatusChange(report.id, e.target.value)}
+                  style={{
+                    padding: '0.25rem',
+                    borderRadius: '4px',
+                    border: '1px solid #d1d5db',
+                    fontSize: '0.85rem',
+                    outline: 'none',
+                    cursor: 'pointer',
+                    fontWeight: '600'
+                  }}
+                >
+                  <option value="PENDIENTE">PENDIENTE</option>
+                  <option value="ACTIVO">ACTIVO</option>
+                  <option value="APAGADO">APAGADO</option>
+                  <option value="INACTIVO">INACTIVO</option>
+                </select>
+              ) : (
+                <Badge variant={getStatusVariant(report.estado)}>
+                  {report.estado}
+                </Badge>
+              )}
             </TableCell>
           </TableRow>
         ))}
