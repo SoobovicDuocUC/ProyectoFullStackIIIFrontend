@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export const LoginBox = () => {
-  const [email, setEmail] = useState("");
+  const [rut, setRut] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -16,13 +16,11 @@ export const LoginBox = () => {
     setLoading(true);
 
     try {
-      // 1. Armamos el payload exacto que espera tu UsuarioRequestDTO
       const payload = {
-        email: email.trim(),
+        rut: rut.trim(),
         password: password.trim(),
       };
 
-      // 2. Hacemos la petición al BFF
       const response = await fetch("http://localhost:8082/api/bff/emergencias/login", {
         method: "POST",
         headers: {
@@ -32,17 +30,14 @@ export const LoginBox = () => {
       });
 
       if (!response.ok) {
-        throw new Error("Credenciales incorrectas. Verifica tu correo y contraseña.");
+        throw new Error("Credenciales incorrectas. Verifica tu RUT y ClaveÚnica.");
       }
 
-      // 3. Obtenemos el AuthResponseDTO (que trae el token y los datos del usuario)
       const data = await response.json();
 
-      // 4. Guardamos el Token y los datos del usuario en el navegador (Local Storage)
       localStorage.setItem("token", data.token);
       localStorage.setItem("usuario", JSON.stringify(data.usuario));
 
-      // 5. Redirigimos al panel de reportes
       navigate("/reportes");
 
     } catch (err) {
@@ -54,20 +49,20 @@ export const LoginBox = () => {
 
   return (
     <form className="form-card" style={{ maxWidth: '400px' }} onSubmit={handleSubmit}>
-      <h2>Acceso de Funcionarios</h2>
-      <p>Acceda utilizando su correo institucional y contraseña.</p>
+      <h2>Iniciar Sesión</h2>
+      <p>Acceda de manera segura utilizando su credencial institucional del Estado.</p>
       
       <FormField 
-        label="Correo Electrónico" 
-        id="email" 
-        type="email" 
-        placeholder="Ej: admin@innovatech.cl"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
+        label="R.U.T. (Ej: 12.345.678-9)" 
+        id="rut" 
+        type="text" 
+        placeholder="Ingrese su R.U.T."
+        value={rut}
+        onChange={(e) => setRut(e.target.value)}
         required
       />
       <FormField 
-        label="Contraseña" 
+        label="ClaveÚnica" 
         id="password" 
         type="password" 
         placeholder="••••••••" 
@@ -84,7 +79,7 @@ export const LoginBox = () => {
       
       <div style={{ marginTop: '2rem' }}>
         <Button type="submit" disabled={loading}>
-          {loading ? "Validando credenciales..." : "Iniciar Sesión"}
+          {loading ? "Validando credenciales..." : "Ingresar con ClaveÚnica"}
         </Button>
       </div>
     </form>
