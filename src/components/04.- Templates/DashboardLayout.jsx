@@ -1,6 +1,6 @@
 import { Navigate } from 'react-router-dom'; // 🔴 Importamos Navigate
 import './../../index.css';
-import { AuthHeader } from '../03.- Organisms/AuthHeader';
+import { Header } from '../03.- Organisms/Header';
 import { Footer } from '../03.- Organisms/Footer';
 import './DashboardLayout.css';
 
@@ -16,7 +16,7 @@ export const DashboardLayout = ({ children }) => {
 
   return (
     <div className="app-container dashboard-layout">
-      <AuthHeader />
+      <Header variant="auth" />
       <div className="dashboard-layout-content">
         <div className="dashboard-layout-container">
           {children}

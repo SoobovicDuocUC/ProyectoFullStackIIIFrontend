@@ -1,11 +1,11 @@
 import './../../index.css';
-import { AuthHeader } from '../../components/03.- Organisms/AuthHeader';
+import { Header } from '../../components/03.- Organisms/Header';
 import { Footer } from '../../components/03.- Organisms/Footer';
 
 export const AuthLayout = ({ children }) => {
   return (
     <div className="app-container" style={{ display: 'flex', flexDirection: 'column' }}>
-      <AuthHeader />
+      <Header variant="auth" />
       <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '2rem' }}>
           

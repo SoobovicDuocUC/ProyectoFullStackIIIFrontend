@@ -1,5 +1,7 @@
 import { MainLayout } from "../../04.- Templates/MainLayout";
 import { ReportFireForm } from "../../03.- Organisms/ReportFireForm";
+import { Button } from "../../01.- Atoms/Button";
+import { Link } from "react-router-dom";
 import "./LandingPage.css"; 
 
 export const LandingPage = () => {

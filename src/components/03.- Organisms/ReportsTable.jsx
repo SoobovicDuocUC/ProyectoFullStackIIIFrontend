@@ -1,4 +1,4 @@
-import { Table, TableHead, TableBody, TableRow, TableHeader, TableCell } from "../01.- Atoms/Table";
+import { Table, TableHead, TableBody, TableRow, TableHeader, TableCell } from "../02.- Molecules/Table";
 import { Badge } from "../01.- Atoms/Badge";
 import "./ReportsTable.css";
 

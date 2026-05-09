@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { DashboardLayout } from "../../04.- Templates/DashboardLayout";
-import { DashboardHeader } from "../../03.- Organisms/DashboardHeader";
+import { DashboardFirst } from "../../03.- Organisms/DashboardFirst";
 import { ReportsTable } from "../../03.- Organisms/ReportsTable";
 import "./ReportsDashboardPage.css";
 
@@ -102,7 +102,7 @@ export const ReportsDashboardPage = () => {
 
   return (
     <DashboardLayout>
-      <DashboardHeader autoridad={autoridad} />
+      <DashboardFirst autoridad={autoridad} />
       
       <div style={{ 
         backgroundColor: 'white', 
