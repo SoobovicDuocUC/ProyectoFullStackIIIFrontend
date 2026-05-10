@@ -16,13 +16,11 @@ export const LoginBox = () => {
     setLoading(true);
 
     try {
-      // 1. Armamos el payload exacto que espera tu UsuarioRequestDTO
       const payload = {
         email: email.trim(),
         password: password.trim(),
       };
 
-      // 2. Hacemos la petición al BFF
       const response = await fetch("http://localhost:8082/api/bff/emergencias/login", {
         method: "POST",
         headers: {
@@ -35,14 +33,11 @@ export const LoginBox = () => {
         throw new Error("Credenciales incorrectas. Verifica tu correo y contraseña.");
       }
 
-      // 3. Obtenemos el AuthResponseDTO (que trae el token y los datos del usuario)
       const data = await response.json();
 
-      // 4. Guardamos el Token y los datos del usuario en el navegador (Local Storage)
       localStorage.setItem("token", data.token);
       localStorage.setItem("usuario", JSON.stringify(data.usuario));
 
-      // 5. Redirigimos al panel de reportes
       navigate("/reportes");
 
     } catch (err) {
