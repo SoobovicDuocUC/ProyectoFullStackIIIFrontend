@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export const LoginBox = () => {
-  const [rut, setRut] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -17,7 +17,7 @@ export const LoginBox = () => {
 
     try {
       const payload = {
-        rut: rut.trim(),
+        email: email.trim(),
         password: password.trim(),
       };
 
@@ -30,7 +30,7 @@ export const LoginBox = () => {
       });
 
       if (!response.ok) {
-        throw new Error("Credenciales incorrectas. Verifica tu RUT y ClaveÚnica.");
+        throw new Error("Credenciales incorrectas. Verifica tu correo y contraseña.");
       }
 
       const data = await response.json();
@@ -49,20 +49,20 @@ export const LoginBox = () => {
 
   return (
     <form className="form-card" style={{ maxWidth: '400px' }} onSubmit={handleSubmit}>
-      <h2>Iniciar Sesión</h2>
-      <p>Acceda de manera segura utilizando su credencial institucional del Estado.</p>
+      <h2>Acceso de Funcionarios</h2>
+      <p>Acceda utilizando su correo institucional y contraseña.</p>
       
       <FormField 
-        label="R.U.T. (Ej: 12.345.678-9)" 
-        id="rut" 
-        type="text" 
-        placeholder="Ingrese su R.U.T."
-        value={rut}
-        onChange={(e) => setRut(e.target.value)}
+        label="Correo Electrónico" 
+        id="email" 
+        type="email" 
+        placeholder="Ej: admin@innovatech.cl"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
         required
       />
       <FormField 
-        label="ClaveÚnica" 
+        label="Contraseña" 
         id="password" 
         type="password" 
         placeholder="••••••••" 
@@ -79,7 +79,7 @@ export const LoginBox = () => {
       
       <div style={{ marginTop: '2rem' }}>
         <Button type="submit" disabled={loading}>
-          {loading ? "Validando credenciales..." : "Ingresar con ClaveÚnica"}
+          {loading ? "Validando credenciales..." : "Iniciar Sesión"}
         </Button>
       </div>
     </form>
