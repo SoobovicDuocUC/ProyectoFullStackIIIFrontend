@@ -1,5 +1,5 @@
 import { render, screen, waitFor } from '@testing-library/react';
-import { ReportsDashboardPage } from '../05.- Pages/Reports/ReportsDashboardPage';
+import { ReportsDashboardPage } from './ReportsDashboardPage';
 import { BrowserRouter } from 'react-router-dom';
 
 global.fetch = jest.fn();
