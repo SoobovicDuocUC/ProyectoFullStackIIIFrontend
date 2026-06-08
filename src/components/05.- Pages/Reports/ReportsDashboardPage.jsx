@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { DashboardLayout } from "../../04.- Templates/DashboardLayout";
 import { DashboardFirst } from "../../03.- Organisms/DashboardFirst";
 import { ReportsTable } from "../../03.- Organisms/ReportsTable";
+import { EmergenciesMap } from "../../02.- Molecules/EmergenciesMap";
+
 import "./ReportsDashboardPage.css";
 
 export const ReportsDashboardPage = () => {
@@ -26,7 +28,7 @@ export const ReportsDashboardPage = () => {
 
     const cargarReportes = async () => {
       try {
-        const response = await fetch("http://localhost:8082/api/bff/emergencias/reportes", {
+        const response = await fetch("http://localhost:1018/api/bff/emergencias/reportes", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -75,7 +77,7 @@ export const ReportsDashboardPage = () => {
   const handleStatusChange = async (reportId, nuevoEstado) => {
     const token = localStorage.getItem("token");
     try {
-      const response = await fetch(`http://localhost:8082/api/bff/emergencias/reportes/${reportId}/estado`, {
+      const response = await fetch(`http://localhost:1018/api/bff/emergencias/reportes/${reportId}/estado`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -128,6 +130,10 @@ export const ReportsDashboardPage = () => {
             <div style={{ marginBottom: '1rem', color: '#6b7280' }}>
               <p>Total de reportes recibidos: <strong>{reports.length}</strong></p>
             </div>
+
+            {/* 🟢 NUEVO: Aquí insertamos el mapa. Le pasamos los reportes para que dibuje los pines */}
+            <EmergenciesMap reports={reports} />
+            
             <ReportsTable 
               reports={reports} 
               rolUsuario={autoridad.rol || autoridad.role} 
