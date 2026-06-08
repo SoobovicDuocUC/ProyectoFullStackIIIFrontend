@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { DashboardLayout } from "../../04.- Templates/DashboardLayout";
 import { DashboardFirst } from "../../03.- Organisms/DashboardFirst";
 import { ReportsTable } from "../../03.- Organisms/ReportsTable";
+import { EmergenciesMap } from "../../02.- Molecules/EmergenciesMap";
+
 import "./ReportsDashboardPage.css";
 
 export const ReportsDashboardPage = () => {
@@ -128,6 +130,10 @@ export const ReportsDashboardPage = () => {
             <div style={{ marginBottom: '1rem', color: '#6b7280' }}>
               <p>Total de reportes recibidos: <strong>{reports.length}</strong></p>
             </div>
+
+            {/* 🟢 NUEVO: Aquí insertamos el mapa. Le pasamos los reportes para que dibuje los pines */}
+            <EmergenciesMap reports={reports} />
+            
             <ReportsTable 
               reports={reports} 
               rolUsuario={autoridad.rol || autoridad.role} 
