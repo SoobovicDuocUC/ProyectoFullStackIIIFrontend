@@ -17,25 +17,22 @@ let DefaultIcon = L.icon({
 });
 L.Marker.prototype.options.icon = DefaultIcon;
 
-// 🟢 NUEVO: Componente unificado que maneja los clics y el movimiento de la cámara
+// Componente unificado que maneja los clics y el movimiento de la cámara
 const MapInteraction = ({ latitud, longitud, setLatitud, setLongitud, centerTrigger, setCenterTrigger }) => {
   const map = useMapEvents({
-    // 1. Escuchar los clics del usuario en el mapa
     click(e) {
       setLatitud(e.latlng.lat);
       setLongitud(e.latlng.lng);
     },
   });
 
-  // 2. Mover la cámara SOLO cuando se usa el botón "Obtener mi ubicación"
   useEffect(() => {
     if (centerTrigger && latitud && longitud) {
-      map.flyTo([latitud, longitud], 15); // Vuela a las coordenadas con zoom 15
-      setCenterTrigger(false); // Apagamos el trigger
+      map.flyTo([latitud, longitud], 15);
+      setCenterTrigger(false);
     }
   }, [centerTrigger, latitud, longitud, map, setCenterTrigger]);
 
-  // Si existen coordenadas, dibuja el pin
   return latitud && longitud ? <Marker position={[latitud, longitud]} /> : null;
 };
 
@@ -46,10 +43,12 @@ export const ReportFireForm = () => {
   const [tipoIncendio, setTipoIncendio] = useState("FORESTAL");
   const [latitud, setLatitud] = useState("");
   const [longitud, setLongitud] = useState("");
+  
+  // 🟢 NUEVO: Estado para guardar la imagen en formato Base64
+  const [imagenBase64, setImagenBase64] = useState(""); 
+  
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  
-  // 🟢 NUEVO: Estado para avisarle al mapa que debe volar a la ubicación del GPS
   const [centerTrigger, setCenterTrigger] = useState(false);
 
   const obtenerUbicacion = () => {
@@ -62,13 +61,25 @@ export const ReportFireForm = () => {
       (position) => {
         setLatitud(position.coords.latitude);
         setLongitud(position.coords.longitude);
-        setCenterTrigger(true); // 🟢 Dispara el movimiento de la cámara
+        setCenterTrigger(true);
         setError("");
       },
       () => {
         setError("No se pudo obtener tu ubicación.");
       }
     );
+  };
+
+  // 🟢 NUEVO: Función para procesar la foto y convertirla a Base64
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagenBase64(reader.result); // Guarda el string largo (ej. "data:image/jpeg;base64,...")
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -88,10 +99,12 @@ export const ReportFireForm = () => {
         longitud: Number(longitud),
         descripcion,
         tipoIncendio,
+        // 🟢 NUEVO: Enviamos la imagen en el JSON hacia el BFF
+        imagenBase64: imagenBase64 
       };
 
       const response = await fetch(
-        "http://localhost:1018/api/bff/emergencias/reportar",
+        "http://192.168.1.9:1018/api/bff/emergencias/reportar",
         {
           method: "POST",
           headers: {
@@ -156,6 +169,33 @@ export const ReportFireForm = () => {
         />
       </div>
 
+      {/* 🟢 NUEVO: Sección para adjuntar fotografía */}
+      <div className="form-group">
+        <label className="form-label">Fotografía de la emergencia (Opcional)</label>
+        <p style={{ fontSize: '0.85rem', color: '#666', marginBottom: '0.5rem' }}>
+          Toma una foto o súbela desde tu galería para ayudar a evaluar la gravedad.
+        </p>
+        <input 
+          type="file" 
+          accept="image/*" 
+          capture="environment" // Pide al celular abrir la cámara trasera
+          onChange={handleImageChange}
+          style={{ marginBottom: '1rem' }}
+        />
+        
+        {/* Vista previa de la imagen si ya se tomó/seleccionó una */}
+        {imagenBase64 && (
+          <div style={{ marginTop: '0.5rem', border: '1px solid #ccc', padding: '0.5rem', borderRadius: '8px', textAlign: 'center' }}>
+            <p style={{ fontSize: '0.8rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>Vista previa:</p>
+            <img 
+              src={imagenBase64} 
+              alt="Vista previa del incendio" 
+              style={{ maxHeight: '200px', maxWidth: '100%', objectFit: 'contain', borderRadius: '4px' }} 
+            />
+          </div>
+        )}
+      </div>
+
       <div className="form-group">
         <label className="form-label">Ubicación</label>
         <p style={{ fontSize: '0.85rem', color: '#666', marginBottom: '0.5rem' }}>
@@ -180,7 +220,6 @@ export const ReportFireForm = () => {
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
             
-            {/* 🟢 NUEVO: Inyectamos nuestro componente que escucha los clics */}
             <MapInteraction 
               latitud={latitud} 
               longitud={longitud} 

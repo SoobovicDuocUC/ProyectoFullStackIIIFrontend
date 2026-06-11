@@ -28,7 +28,8 @@ export const ReportsDashboardPage = () => {
 
     const cargarReportes = async () => {
       try {
-        const response = await fetch("http://localhost:1018/api/bff/emergencias/reportes", {
+        //localhost:1018, se cambio a la ip de la maquina para que funcione en otros dispositivos
+        const response = await fetch("http://192.168.1.9:1018/api/bff/emergencias/reportes", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -77,7 +78,7 @@ export const ReportsDashboardPage = () => {
   const handleStatusChange = async (reportId, nuevoEstado) => {
     const token = localStorage.getItem("token");
     try {
-      const response = await fetch(`http://localhost:1018/api/bff/emergencias/reportes/${reportId}/estado`, {
+      const response = await fetch(`http://192.168.1.9:1018/api/bff/emergencias/reportes/${reportId}/estado`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
