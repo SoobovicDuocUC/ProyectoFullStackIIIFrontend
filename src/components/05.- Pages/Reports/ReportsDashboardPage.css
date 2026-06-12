@@ -53,3 +53,49 @@
     padding: 0.5rem;
   }
 }
+
+
+.reports-container {
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.reports-title {
+  color: #1f2937;
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+  border-bottom: 2px solid var(--accent);
+  padding-bottom: 0.5rem;
+}
+
+.reports-summary {
+  margin-bottom: 1rem;
+  color: #6b7280;
+}
+
+.loading-message {
+  color: #0056b3;
+}
+
+.error-message {
+  color: red;
+}
+
+.risk-loading {
+  color: #1d4ed8;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 0.75rem;
+}
+
+@media (max-width: 768px) {
+  .reports-container {
+    padding: 1rem;
+  }
+
+  .reports-title {
+    font-size: 1.1rem;
+  }
+}

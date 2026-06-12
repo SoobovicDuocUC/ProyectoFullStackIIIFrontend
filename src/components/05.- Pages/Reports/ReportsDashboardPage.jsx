@@ -6,7 +6,7 @@ import { ReportsTable } from "../../03.- Organisms/ReportsTable";
 import { EmergenciesMap } from "../../02.- Molecules/EmergenciesMap";
 import "./ReportsDashboardPage.css";
 
-const BFF_BASE = "http://192.168.1.9:1019";
+const BFF_BASE = "http://10.31.88.179:1019";
 
 export const ReportsDashboardPage = () => {
   const [autoridad] = useState(() => {
@@ -163,61 +163,54 @@ export const ReportsDashboardPage = () => {
     <DashboardLayout>
       <DashboardFirst autoridad={autoridad} />
 
-      <div style={{
-        backgroundColor: 'white',
-        padding: '1.5rem',
-        borderRadius: '8px',
-        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-      }}>
-        <h2 style={{
-          color: '#1f2937',
-          fontSize: '1.3rem',
-          marginBottom: '1rem',
-          borderBottom: '2px solid var(--accent)',
-          paddingBottom: '0.5rem'
-        }}>
-          Registro de Reportes de Emergencia
-        </h2>
+  <div className="reports-container">
+    <h2 className="reports-title">
+      Registro de Reportes de Emergencia
+    </h2>
 
-        {loading && <p style={{ color: '#0056b3' }}>Conectando con el servidor...</p>}
-        {error && <p style={{ color: 'red' }}>{error}</p>}
+    {loading && (
+      <p className="loading-message">
+        Conectando con el servidor...
+      </p>
+    )}
 
-        {!loading && !error && (
-          <>
-            <div style={{ marginBottom: '1rem', color: '#6b7280' }}>
-              <p>Total de reportes recibidos: <strong>{reports.length}</strong></p>
-            </div>
+    {error && (
+      <p className="error-message">
+        {error}
+      </p>
+    )}
 
-            {/* ── Mapa (con ref para scroll automático) ── */}
-            <div ref={mapRef}>
-              <EmergenciesMap
-                reports={reports}
-                riesgoData={riesgoData}
-                onClearRiesgo={handleClearRiesgo}
-              />
-            </div>
+    {!loading && !error && (
+      <>
+        <div className="reports-summary">
+          <p>
+            Total de reportes recibidos: <strong>{reports.length}</strong>
+          </p>
+        </div>
 
-            {/* Indicador de carga de riesgo */}
-            {loadingRiesgo && (
-              <p style={{
-                color: '#1d4ed8',
-                fontWeight: '600',
-                fontSize: '0.9rem',
-                marginBottom: '0.75rem'
-              }}>
-                ⏳ Cargando análisis de riesgo...
-              </p>
-            )}
+        <div ref={mapRef}>
+          <EmergenciesMap
+            reports={reports}
+            riesgoData={riesgoData}
+            onClearRiesgo={handleClearRiesgo}
+          />
+        </div>
 
-            <ReportsTable
-              reports={reports}
-              rolUsuario={autoridad.rol || autoridad.role}
-              onStatusChange={handleStatusChange}
-              onVerRiesgo={handleVerRiesgo}       // ← NUEVO
-            />
-          </>
+        {loadingRiesgo && (
+          <p className="risk-loading">
+            ⏳ Cargando análisis de riesgo...
+          </p>
         )}
-      </div>
+
+        <ReportsTable
+          reports={reports}
+          rolUsuario={autoridad.rol || autoridad.role}
+          onStatusChange={handleStatusChange}
+          onVerRiesgo={handleVerRiesgo}
+        />
+      </>
+    )}
+  </div>
     </DashboardLayout>
   );
 };
