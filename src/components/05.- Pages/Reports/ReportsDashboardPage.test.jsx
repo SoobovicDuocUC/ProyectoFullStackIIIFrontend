@@ -10,6 +10,20 @@ jest.mock('react-router-dom', () => ({
   useNavigate: () => mockNavigate,
 }));
 
+// 🟢 FIX: Mock global para react-leaflet (Evita el error de 'export')
+jest.mock('react-leaflet', () => ({
+  MapContainer: ({ children }) => <div data-testid="map-container">{children}</div>,
+  TileLayer: () => <div data-testid="tile-layer" />,
+  Marker: ({ children }) => <div data-testid="marker">{children}</div>,
+  Popup: ({ children }) => <div data-testid="popup">{children}</div>,
+  Polygon: () => <div data-testid="polygon" />,
+  Polyline: () => <div data-testid="polyline" />,
+  useMap: () => ({
+    flyTo: jest.fn(),
+  }),
+  useMapEvents: () => ({}),
+}));
+
 describe('ReportsDashboardPage', () => {
   beforeEach(() => {
     fetch.mockClear();
@@ -55,8 +69,10 @@ describe('ReportsDashboardPage', () => {
 
     expect(screen.getByText(/Conectando con el servidor/i)).toBeInTheDocument();
 
+    // 🟢 FIX: Usamos getAllByText porque el texto aparece tanto en la tabla como en el mapa
     await waitFor(() => {
-      expect(screen.getByText(/Simulación de alerta de humo/i)).toBeInTheDocument();
+      const elementos = screen.getAllByText(/Simulación de alerta de humo/i);
+      expect(elementos.length).toBeGreaterThan(0);
     });
 
     expect(fetch).toHaveBeenCalledTimes(1);
