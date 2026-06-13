@@ -6,7 +6,7 @@ import { ReportsTable } from "../../03.- Organisms/ReportsTable";
 import { EmergenciesMap } from "../../02.- Molecules/EmergenciesMap";
 import "./ReportsDashboardPage.css";
 
-const BFF_BASE = "http://10.31.88.179:1019";
+const BFF_BASE = "http://192.168.1.9:1019";
 
 export const ReportsDashboardPage = () => {
   const [autoridad] = useState(() => {
