@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";   // ← añadir useRef
+import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { DashboardLayout } from "../../04.- Templates/DashboardLayout";
 import { DashboardFirst } from "../../03.- Organisms/DashboardFirst";
@@ -14,15 +14,17 @@ export const ReportsDashboardPage = () => {
     return usuarioData ? JSON.parse(usuarioData) : null;
   });
 
-  
   const [reports, setReports] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // ── Estado de riesgo ──
+  // Estado del filtro
+  const [filtroActual, setFiltroActual] = useState("TODOS");
+
+  // Estado de riesgo
   const [riesgoData, setRiesgoData] = useState(null);
   const [loadingRiesgo, setLoadingRiesgo] = useState(false);
-  const mapRef = useRef(null);   // para hacer scroll al mapa
+  const mapRef = useRef(null);
 
   const navigate = useNavigate();
 
@@ -94,123 +96,138 @@ export const ReportsDashboardPage = () => {
     }
   };
 
-  // ── Cargar y mostrar riesgo de un reporte ──
+  //Cargar y mostrar riesgo de un reporte
   const handleVerRiesgo = async (report) => {
-  if (report.coordenadas?.latitud == null || report.coordenadas?.longitud == null) {
-    alert("Este reporte no tiene coordenadas válidas para analizar.");
-    return;
-  }
-
-  const token = localStorage.getItem("token");
-  setLoadingRiesgo(true);
-  setRiesgoData(null);
-
-  try {
-    const lat = report.coordenadas.latitud;
-    const lng = report.coordenadas.longitud;
-
-    const [zonaRes, rutaRes] = await Promise.all([
-      fetch(
-        `${BFF_BASE}/api/bff/emergencias/riesgos/${report.id}/zona-evacuacion?lat=${lat}&lng=${lng}`,
-        {
-          headers: {
-            "Authorization": `Bearer ${token}`,
-            "Content-Type": "application/json"
-          }
-        }
-      ),
-      fetch(
-        `${BFF_BASE}/api/bff/emergencias/riesgos/${report.id}/ruta-segura?lat=${lat}&lng=${lng}`,
-        {
-          headers: {
-            "Authorization": `Bearer ${token}`,
-            "Content-Type": "application/json"
-          }
-        }
-      )
-    ]);
-
-    if (!zonaRes.ok || !rutaRes.ok) {
-      throw new Error("El servicio de riesgo no está disponible en este momento.");
+    if (report.coordenadas?.latitud == null || report.coordenadas?.longitud == null) {
+      alert("Este reporte no tiene coordenadas válidas para analizar.");
+      return;
     }
 
-    const zona = await zonaRes.json();
-    const ruta = await rutaRes.json();
+    const token = localStorage.getItem("token");
+    setLoadingRiesgo(true);
+    setRiesgoData(null);
 
-    console.log("ZONA:", JSON.stringify(zona, null, 2));
-    console.log("RUTA:", JSON.stringify(ruta, null, 2));
+    try {
+      const lat = report.coordenadas.latitud;
+      const lng = report.coordenadas.longitud;
 
-    setRiesgoData({
-      zona,
-      ruta,
-      reportId: report.id,
-      reportCenter: [lat, lng]
-    });
+      const [zonaRes, rutaRes] = await Promise.all([
+        fetch(
+          `${BFF_BASE}/api/bff/emergencias/riesgos/${report.id}/zona-evacuacion?lat=${lat}&lng=${lng}`,
+          { headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" } }
+        ),
+        fetch(
+          `${BFF_BASE}/api/bff/emergencias/riesgos/${report.id}/ruta-segura?lat=${lat}&lng=${lng}`,
+          { headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" } }
+        )
+      ]);
 
-    mapRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-  } catch (err) {
-    alert(`Error al cargar el análisis de riesgo: ${err.message}`);
-  } finally {
-    setLoadingRiesgo(false);
-  }
-};
+      if (!zonaRes.ok || !rutaRes.ok) {
+        throw new Error("El servicio de riesgo no está disponible en este momento.");
+      }
+
+      const zona = await zonaRes.json();
+      const ruta = await rutaRes.json();
+
+      setRiesgoData({
+        zona,
+        ruta,
+        reportId: report.id,
+        reportCenter: [lat, lng]
+      });
+
+      mapRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    } catch (err) {
+      alert(`Error al cargar el análisis de riesgo: ${err.message}`);
+    } finally {
+      setLoadingRiesgo(false);
+    }
+  };
 
   const handleClearRiesgo = () => setRiesgoData(null);
 
+  // ── Lógica de Filtrado ──
+  const reportesFiltrados = reports.filter((rep) => {
+    if (filtroActual === "ACTIVOS") return rep.estado === "ACTIVO";
+    if (filtroActual === "ALTA_PRIORIDAD") return rep.prioridad === "ALTA" || rep.prioridad === "CRÍTICA";
+    return true; 
+  });
+
   if (!autoridad) return <div>Cargando sesión...</div>;
 
-  return (
-    <DashboardLayout>
-      <DashboardFirst autoridad={autoridad} />
+ // Función que decide qué mostrar dependiendo del estado (Carga, Error o Éxito)
+  const renderContenido = () => {
+    if (loading) {
+      return <p className="loading-message">Conectando con el servidor...</p>;
+    }
 
-  <div className="reports-container">
-    <h2 className="reports-title">
-      Registro de Reportes de Emergencia
-    </h2>
+    if (error) {
+      return <p className="error-message">{error}</p>;
+    }
 
-    {loading && (
-      <p className="loading-message">
-        Conectando con el servidor...
-      </p>
-    )}
-
-    {error && (
-      <p className="error-message">
-        {error}
-      </p>
-    )}
-
-    {!loading && !error && (
+    // Si no está cargando y no hay error, mostramos todo el dashboard limpio
+    return (
       <>
+        {/* ── Botonera de Filtros ── */}
+        <div className="filters-container">
+          <button 
+            className={`filter-btn ${filtroActual === "TODOS" ? "active" : ""}`}
+            onClick={() => setFiltroActual("TODOS")}
+          >
+            Todos
+          </button>
+          <button 
+            className={`filter-btn ${filtroActual === "ACTIVOS" ? "active" : ""}`}
+            onClick={() => setFiltroActual("ACTIVOS")}
+          >
+            🔥 Solo Activos
+          </button>
+          <button 
+            className={`filter-btn ${filtroActual === "ALTA_PRIORIDAD" ? "active" : ""}`}
+            onClick={() => setFiltroActual("ALTA_PRIORIDAD")}
+          >
+            🚨 Prioridad Alta
+          </button>
+        </div>
+
         <div className="reports-summary">
           <p>
-            Total de reportes recibidos: <strong>{reports.length}</strong>
+            Total de reportes mostrados: <strong>{reportesFiltrados.length}</strong> de {reports.length}
           </p>
         </div>
 
         <div ref={mapRef}>
           <EmergenciesMap
-            reports={reports}
+            reports={reportesFiltrados}
             riesgoData={riesgoData}
             onClearRiesgo={handleClearRiesgo}
           />
         </div>
 
         {loadingRiesgo && (
-          <p className="risk-loading">
-            ⏳ Cargando análisis de riesgo...
-          </p>
+          <p className="risk-loading">⏳ Cargando análisis de riesgo...</p>
         )}
 
         <ReportsTable
-          reports={reports}
+          reports={reportesFiltrados}
           rolUsuario={autoridad.rol || autoridad.role}
           onStatusChange={handleStatusChange}
           onVerRiesgo={handleVerRiesgo}
         />
       </>
-    )}
-  </div>
+    );
+  };
+
+  return (
+    <DashboardLayout>
+      <DashboardFirst autoridad={autoridad} />
+
+      <div className="reports-container">
+        <h2 className="reports-title">Registro de Reportes de Emergencia</h2>
+        
+        {renderContenido()}
+        
+      </div>
     </DashboardLayout>
   );
 };

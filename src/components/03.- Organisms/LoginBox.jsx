@@ -1,6 +1,7 @@
 import { FormField } from "../02.- Molecules/FormField";
 import { Button } from "../01.- Atoms/Button";
-import { useState } from "react";
+// 🟢 NUEVO: Importamos useEffect
+import { useState, useEffect } from "react"; 
 import { useNavigate } from "react-router-dom";
 
 export const LoginBox = () => {
@@ -9,6 +10,14 @@ export const LoginBox = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  // 🟢 NUEVO: Efecto para redirigir si ya hay una sesión activa
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      navigate("/reportes");
+    }
+  }, [navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

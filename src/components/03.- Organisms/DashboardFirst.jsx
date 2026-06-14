@@ -6,7 +6,13 @@ export const DashboardFirst = ({ autoridad }) => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    localStorage.removeItem("autoridad");
+    // 🟢 CORRECCIÓN: Borrar los nombres EXACTOS de las llaves que guardaste en el Login
+    localStorage.removeItem("token");
+    localStorage.removeItem("usuario");
+    
+    // Opcional pero recomendado: limpiar todo por si acaso
+    // localStorage.clear(); 
+    
     navigate("/login");
   };
 
