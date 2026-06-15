@@ -30,7 +30,7 @@ export const LoginBox = () => {
         password: password.trim(),
       };
 
-      const response = await fetch("http://192.168.1.9:1019/api/bff/emergencias/login", {
+      const response = await fetch("http://10.24.130.46:1020/api/bff/emergencias/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
