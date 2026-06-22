@@ -20,6 +20,7 @@
     --border: #374151;
     --code-bg: #111827; 
     --accent: #EF4444; 
+  }
 }
 
 
@@ -48,4 +49,9 @@ a {
   text-decoration: none;
   color: inherit;
 }
+code {
+  font-family: 'Courier New', Courier, monospace;
+  background-color: var(--code-bg);
+  padding: 0.2em 0.4em;
+  border-radius: 4px;
 }
