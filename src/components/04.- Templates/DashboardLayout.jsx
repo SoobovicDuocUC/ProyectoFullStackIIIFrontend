@@ -6,10 +6,9 @@ import './DashboardLayout.css';
 
 export const DashboardLayout = ({ children }) => {
   
-  // 🔴 NUEVO: Buscamos el token en el navegador
   const token = localStorage.getItem("token");
 
-  // Si no hay token, lo redirigimos inmediatamente a la pantalla de login
+
   if (!token) {
     return <Navigate to="/login" replace />;
   }
