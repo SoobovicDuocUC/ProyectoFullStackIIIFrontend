@@ -104,7 +104,7 @@ export const ReportFireForm = () => {
       };
 
       const response = await fetch(
-        "http://10.24.130.46:1020/api/bff/emergencias/reportar",
+        "http://localhost:1020/api/bff/emergencias/reportar",
         {
           method: "POST",
           headers: {

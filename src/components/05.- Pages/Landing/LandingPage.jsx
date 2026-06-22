@@ -15,10 +15,12 @@ export const LandingPage = () => {
             La información será enviada directamente a las brigadas de respuesta rápida.
           </p>
         </div>
-
         <div className="landing-form-wrapper">
           <ReportFireForm />
         </div>
+        <Link to="/seguimiento">
+        <Button>Consultar Reporte</Button>
+        </Link>
       </div>
     </MainLayout>
   );

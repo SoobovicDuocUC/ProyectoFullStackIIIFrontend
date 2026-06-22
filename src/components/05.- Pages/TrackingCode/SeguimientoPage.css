@@ -1,0 +1,60 @@
+.seguimiento-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 70vh;
+  padding: 2rem 1rem;
+}
+
+.seguimiento-card {
+  width: 100%;
+  max-width: 450px; /* Lo hicimos más angosto para que se vea como una tarjeta rápida */
+  background-color: white;
+}
+
+.back-link {
+  display: inline-block;
+  color: #1d4ed8;
+  text-decoration: none;
+  font-weight: 500;
+  margin-bottom: 1rem;
+}
+
+.back-link:hover {
+  text-decoration: underline;
+}
+
+.resultado-simple {
+  border-top: 1px solid #eee;
+  padding-top: 1rem;
+  animation: fadeIn 0.3s ease-in;
+}
+
+/* Clases dinámicas para el estado */
+.badge-estado {
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  font-size: 1.1rem;
+}
+
+.badge-estado.ACTIVO { background-color: #fee2e2; color: #dc2626; }
+.badge-estado.CONTROLADO { background-color: #fef3c7; color: #d97706; }
+.badge-estado.APAGADO { background-color: #dcfce3; color: #16a34a; }
+.badge-estado.PENDIENTE, .badge-estado.RECIBIDO { background-color: #f3f4f6; color: #4b5563; }
+
+
+
+.seguimiento-container {
+  display: flex;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.seguimiento-card {
+  width: 100%;
+  max-width: 600px;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}

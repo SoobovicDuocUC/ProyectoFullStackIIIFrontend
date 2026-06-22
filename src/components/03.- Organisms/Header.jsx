@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import './Header.css';
+import { Button } from "../01.- Atoms/Button";
 
 export const Header = ({ variant = 'public' }) => {
   const navigate = useNavigate();

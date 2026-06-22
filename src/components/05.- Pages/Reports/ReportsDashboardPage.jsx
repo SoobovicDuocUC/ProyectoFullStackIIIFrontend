@@ -6,7 +6,7 @@ import { ReportsTable } from "../../03.- Organisms/ReportsTable";
 import { EmergenciesMap } from "../../02.- Molecules/EmergenciesMap";
 import "./ReportsDashboardPage.css";
 
-const BFF_BASE = "http://10.24.130.46:1020";
+const BFF_BASE = "http://localhost:1020";
 
 export const ReportsDashboardPage = () => {
   const [autoridad] = useState(() => {
@@ -28,7 +28,7 @@ export const ReportsDashboardPage = () => {
 
   const navigate = useNavigate();
 
-  // ── Carga inicial de reportes ──
+  //Carga inicial de reportes
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token || !autoridad) { navigate("/login"); return; }
@@ -74,7 +74,7 @@ export const ReportsDashboardPage = () => {
     cargarReportes();
   }, [navigate, autoridad]);
 
-  // ── Cambio de estado de un reporte ──
+  //Cambio de estado de un reporte
   const handleStatusChange = async (reportId, nuevoEstado) => {
     const token = localStorage.getItem("token");
     try {
@@ -146,7 +146,7 @@ export const ReportsDashboardPage = () => {
 
   const handleClearRiesgo = () => setRiesgoData(null);
 
-  // ── Lógica de Filtrado ──
+  //Lógica de filtrado de reportes según el estado del filtroActual
   const reportesFiltrados = reports.filter((rep) => {
     if (filtroActual === "ACTIVOS") return rep.estado === "ACTIVO";
     if (filtroActual === "ALTA_PRIORIDAD") return rep.prioridad === "ALTA" || rep.prioridad === "CRÍTICA";
@@ -168,7 +168,6 @@ export const ReportsDashboardPage = () => {
     // Si no está cargando y no hay error, mostramos todo el dashboard limpio
     return (
       <>
-        {/* ── Botonera de Filtros ── */}
         <div className="filters-container">
           <button 
             className={`filter-btn ${filtroActual === "TODOS" ? "active" : ""}`}
