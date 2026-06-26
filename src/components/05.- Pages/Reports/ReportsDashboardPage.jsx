@@ -18,17 +18,15 @@ export const ReportsDashboardPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // Estado del filtro
   const [filtroActual, setFiltroActual] = useState("TODOS");
 
-  // Estado de riesgo
+  const [reporteSeleccionado, setReporteSeleccionado] = useState(null);
   const [riesgoData, setRiesgoData] = useState(null);
   const [loadingRiesgo, setLoadingRiesgo] = useState(false);
   const mapRef = useRef(null);
 
   const navigate = useNavigate();
 
-  //Carga inicial de reportes
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token || !autoridad) { navigate("/login"); return; }
@@ -74,7 +72,6 @@ export const ReportsDashboardPage = () => {
     cargarReportes();
   }, [navigate, autoridad]);
 
-  //Cambio de estado de un reporte
   const handleStatusChange = async (reportId, nuevoEstado) => {
     const token = localStorage.getItem("token");
     try {
@@ -96,7 +93,6 @@ export const ReportsDashboardPage = () => {
     }
   };
 
-  //Cargar y mostrar riesgo de un reporte
   const handleVerRiesgo = async (report) => {
     if (report.coordenadas?.latitud == null || report.coordenadas?.longitud == null) {
       alert("Este reporte no tiene coordenadas válidas para analizar.");
@@ -104,6 +100,7 @@ export const ReportsDashboardPage = () => {
     }
 
     const token = localStorage.getItem("token");
+    setReporteSeleccionado(report);
     setLoadingRiesgo(true);
     setRiesgoData(null);
 
@@ -135,8 +132,6 @@ export const ReportsDashboardPage = () => {
         reportId: report.id,
         reportCenter: [lat, lng]
       });
-
-      mapRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     } catch (err) {
       alert(`Error al cargar el análisis de riesgo: ${err.message}`);
     } finally {
@@ -144,9 +139,11 @@ export const ReportsDashboardPage = () => {
     }
   };
 
-  const handleClearRiesgo = () => setRiesgoData(null);
+  const cerrarModal = () => {
+    setReporteSeleccionado(null);
+    setRiesgoData(null);
+  };
 
-  //Lógica de filtrado de reportes según el estado del filtroActual
   const reportesFiltrados = reports.filter((rep) => {
     if (filtroActual === "ACTIVOS") return rep.estado === "ACTIVO";
     if (filtroActual === "ALTA_PRIORIDAD") return rep.prioridad === "ALTA" || rep.prioridad === "CRÍTICA";
@@ -155,7 +152,6 @@ export const ReportsDashboardPage = () => {
 
   if (!autoridad) return <div>Cargando sesión...</div>;
 
- // Función que decide qué mostrar dependiendo del estado (Carga, Error o Éxito)
   const renderContenido = () => {
     if (loading) {
       return <p className="loading-message">Conectando con el servidor...</p>;
@@ -165,7 +161,6 @@ export const ReportsDashboardPage = () => {
       return <p className="error-message">{error}</p>;
     }
 
-    // Si no está cargando y no hay error, mostramos todo el dashboard limpio
     return (
       <>
         <div className="filters-container">
@@ -195,24 +190,83 @@ export const ReportsDashboardPage = () => {
           </p>
         </div>
 
-        <div ref={mapRef}>
-          <EmergenciesMap
-            reports={reportesFiltrados}
-            riesgoData={riesgoData}
-            onClearRiesgo={handleClearRiesgo}
-          />
+        <div className="dashboard-split-layout">
+          
+          <div className="dashboard-map-column" ref={mapRef}>
+            <EmergenciesMap
+              reports={reportesFiltrados}
+            />
+          </div>
+
+          <div className="dashboard-table-column">
+            <ReportsTable
+              reports={reportesFiltrados}
+              rolUsuario={autoridad.rol || autoridad.role}
+              onStatusChange={handleStatusChange}
+              onVerRiesgo={handleVerRiesgo}
+            />
+          </div>
+          
         </div>
 
-        {loadingRiesgo && (
-          <p className="risk-loading">⏳ Cargando análisis de riesgo...</p>
-        )}
+        {/* MODAL MANTENIDO EXACTAMENTE IGUAL QUE ANTES */}
+        {reporteSeleccionado && (
+          <div className="modal-overlay">
+            <div className="risk-modal">
+              <div className="risk-modal-header">
+                <h2>Zona de Riesgo y Evacuación</h2>
+                <button className="close-btn-small" onClick={cerrarModal} title="Cerrar ventana">
+                  ✕
+                </button>
+              </div>
 
-        <ReportsTable
-          reports={reportesFiltrados}
-          rolUsuario={autoridad.rol || autoridad.role}
-          onStatusChange={handleStatusChange}
-          onVerRiesgo={handleVerRiesgo}
-        />
+              <div className="risk-modal-body">
+                <div className="risk-modal-map">
+                  {loadingRiesgo ? (
+                    <div style={{ padding: '2rem', textAlign: 'center', color: '#1d4ed8', fontWeight: 'bold' }}>
+                      ⏳ Cargando mapa y zona de riesgo...
+                    </div>
+                  ) : (
+                    <EmergenciesMap
+                      reports={[reporteSeleccionado]}
+                      riesgoData={riesgoData}
+                    />
+                  )}
+                </div>
+
+                <div className="risk-modal-info">
+                  <h3>Detalles del Reporte #{reporteSeleccionado.id}</h3>
+                  <div className="risk-info-item">
+                    <strong>Prioridad</strong>
+                    <span>{reporteSeleccionado.prioridad}</span>
+                  </div>
+                  <div className="risk-info-item">
+                    <strong>Estado Actual</strong>
+                    <span>{reporteSeleccionado.estado}</span>
+                  </div>
+                  <div className="risk-info-item">
+                    <strong>Tipo de Incendio</strong>
+                    <span>{reporteSeleccionado.tipoIncendio}</span>
+                  </div>
+                  <div className="risk-info-item">
+                    <strong>Equipo Asignado</strong>
+                    <span>
+                      {reporteSeleccionado.equipoAsignado 
+                        ? reporteSeleccionado.equipoAsignado.replace(/_/g, ' ') 
+                        : 'SIN ASIGNAR'}
+                    </span>
+                  </div>
+                  <div className="risk-info-item">
+                    <strong>Descripción</strong>
+                    <p style={{ marginTop: '5px', lineHeight: '1.4' }}>
+                      {reporteSeleccionado.descripcion}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </>
     );
   };
@@ -220,12 +274,9 @@ export const ReportsDashboardPage = () => {
   return (
     <DashboardLayout>
       <DashboardFirst autoridad={autoridad} />
-
       <div className="reports-container">
         <h2 className="reports-title">Registro de Reportes de Emergencia</h2>
-        
         {renderContenido()}
-        
       </div>
     </DashboardLayout>
   );

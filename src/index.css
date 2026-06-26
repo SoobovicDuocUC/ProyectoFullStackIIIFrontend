@@ -5,7 +5,7 @@
   --text-h: #111827;
   --bg: #ffffff;
   --border: #D1D5DB;
-  --code-bg: #e5e7eb; /* Light grey for layout background */
+  --code-bg: #ffe0d1; /* Soft pinkish-orange background */
   --accent: #DC2626; /* Primary Emergency Red */
   --shadow: rgba(0, 0, 0, 0.15) 0 15px 30px -5px, rgba(0, 0, 0, 0.1) 0 10px 15px -5px;
   
@@ -23,7 +23,6 @@
   }
 }
 
-
 * {
   box-sizing: border-box;
   margin: 0;
@@ -35,9 +34,16 @@ body {
   padding: 0;
   min-height: 100vh;
   font-family: var(--sans);
-  background-color: var(--code-bg);
   color: var(--text);
   -webkit-font-smoothing: antialiased;
+  
+  /* --- NEW BACKGROUND STYLES --- */
+  background-color: var(--code-bg);
+  background-image: url('/Contour-Map.svg'); 
+  background-size: cover; /* Ensures the image covers the whole page */
+  background-position: center; /* Keeps the image centered */
+  background-attachment: fixed; /* Image stays in place when scrolling */
+  background-blend-mode: overlay; /* Helps your translucent image blend nicely with the color */
 }
 
 h1, h2, h3 {
@@ -49,9 +55,11 @@ a {
   text-decoration: none;
   color: inherit;
 }
+
 code {
   font-family: 'Courier New', Courier, monospace;
-  background-color: var(--code-bg);
+  /* Updated so code blocks stay readable over the new background image */
+  background-color: rgba(255, 255, 255, 0.5); 
   padding: 0.2em 0.4em;
   border-radius: 4px;
 }
