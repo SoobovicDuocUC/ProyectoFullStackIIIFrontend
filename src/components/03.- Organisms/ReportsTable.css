@@ -1,7 +1,7 @@
 .reports-table {
   width: 100%;
   border-collapse: collapse;
-  background-color: white;
+  background-color: var(--bg);
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
@@ -13,10 +13,13 @@
 }
 
 .reports-table th {
-  padding: 1rem;
+  padding: 1rem 0.5rem; 
   text-align: left;
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  white-space: nowrap; 
 }
 
 .reports-table tbody tr {
@@ -25,13 +28,14 @@
 }
 
 .reports-table tbody tr:hover {
-  background-color: #f9fafb;
+  background-color: rgba(128, 128, 128, 0.15);
 }
 
 .reports-table td {
-  padding: 1rem;
-  font-size: 0.9rem;
-  color: #374151;
+  padding: 0.8rem 0.5rem; 
+  font-size: 0.85rem;
+  color: var(--text);
+  vertical-align: middle;
 }
 
 .reports-table .coordinates {
@@ -76,4 +80,13 @@
   .reports-table .description {
     max-width: 150px;
   }
+}
+
+
+.reports-table td:nth-child(1),
+.reports-table td:nth-child(2),
+.reports-table td:nth-child(5),
+.reports-table td:nth-child(8), 
+.reports-table td:nth-child(9)   {
+  white-space: nowrap; 
 }

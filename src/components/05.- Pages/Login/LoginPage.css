@@ -4,7 +4,7 @@
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  background-color: #111827; /* Dark Charcoal Base */
+  background-color: transparent; /* Dark Charcoal Base */
   width: 100%;
 }
 

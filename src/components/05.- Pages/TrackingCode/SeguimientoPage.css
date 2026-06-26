@@ -9,7 +9,10 @@
 .seguimiento-card {
   width: 100%;
   max-width: 450px; /* Lo hicimos más angosto para que se vea como una tarjeta rápida */
-  background-color: white;
+  background-color: var(--bg);
+  border-radius: 8px;
+  padding: 2rem;
+  box-shadow: var(--shadow);
 }
 
 .back-link {
